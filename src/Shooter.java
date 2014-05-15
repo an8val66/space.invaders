@@ -20,6 +20,7 @@ public class Shooter
         icon = new ImageIcon( getClass().getResource( "/Sprites/nave.png" ) ).getImage();
         iw = icon.getWidth( null );
         ih = icon.getHeight( null );
+        
         // x e y iniciais centrados na area de movimentacao
         x = (int)( iw / 2 + ( a.width - iw ) / 2 );
         y = (int)( a.height - 100 + ih / 2 );
@@ -41,6 +42,19 @@ public class Shooter
     public void draw( Graphics g )
     {
         g.drawImage( icon, x - iw / 2, y - ih / 2, null );
+    }
+    
+    // verifica se o shooter esta proximo de um invasor
+    public boolean hitIn( Invader i )
+    {
+        int ox = i.getX();
+        int oy = i.getY();
+        
+        if ( Math.sqrt( (x - ox ) * ( x - ox ) + ( y -oy ) * ( y - oy ) ) < 35) {
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public int getX() { return x; }
