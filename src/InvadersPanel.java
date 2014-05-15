@@ -4,7 +4,7 @@ import java.util.*;
 import javax.swing.JPanel;
 
 // class de implementacao do painel do game, controle de elementos e renderizacao
-public class InvadersPanel extends JPanel implements Runnable,KeyListener
+public class InvadersPanel extends JPanel implements Runnable, KeyListener
 {
     // Configs
     private static final int NUM_INVASORES = 30;
@@ -20,6 +20,7 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
     // thread para controle de animacao
     private Thread animator;
     private boolean isPaused = false;
+    private boolean isWaitingForRestart = false;
     
     // movimentacao invaders
     private ArrayList<Invader> invasores;
@@ -72,7 +73,6 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
     private void startGame()
     {
         if ( animator == null ) {
-            
             animator = new Thread( this );
             animator.start();
         }
@@ -93,7 +93,7 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
     // atualizar os elementos do game
     private synchronized void gameUpdate()
     {
-        if ( !isPaused ) {
+        if ( !isPaused && !isWaitingForRestart ) {
             
             // movendo os sprites
             for( Invader i:invasores ) i.move();
@@ -106,8 +106,7 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
                 Invader invasor = iteInvasor.next();
                 
                 if (shooter.hitIn(invasor)) {
-                    isPaused = true;
-                    zerarGame();
+                    isWaitingForRestart = true;
                     break;
                 }
                 
@@ -151,36 +150,79 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
         if ( bomba != null ) bomba.draw( g );
         
         // print statisticas
-        String s = " Bombas: " + numBombs + " Invasores: " + invasores.size() + " Score: " + score;
-        g.drawString( s, 5, getHeight() - 10 );
+        if (isPaused || isWaitingForRestart){
+            g.setColor(new Color(0, 0, 0, 200));
+            g.fillRect( 0 , 0 , getWidth(), getHeight());
+            
+            g.setColor(new Color(255, 255, 255));
+            String s = "Score: " + score;
+            g.drawString( s, getWidth() / 2 - 25 , getHeight() / 2 );
+            
+            s = "PRESSIONE ENTER PARA CONTINUAR";
+            g.drawString( s, getWidth() / 2 - 110 , getHeight() / 2 + 20 );
+            
+            
+        }else{
+            String s = " Bombas: " + numBombs + " Invasores: " + invasores.size() + " Score: " + score;
+            g.drawString( s, 5, getHeight() - 10 );
+        }
+        
     }
     
     // processo de teclas pressionadas durante o game
     public void keyPressed( KeyEvent e )
     {
         int keyCode = e.getKeyCode();
-        if ( keyCode == KeyEvent.VK_P ) isPaused = !isPaused;
-        if ( isPaused ) return;
-        if ( keyCode == KeyEvent.VK_LEFT ) dir = Direcao.LEFT;
-        else if ( keyCode == KeyEvent.VK_RIGHT ) dir = Direcao.RIGHT;
-        else if ( keyCode == KeyEvent.VK_UP ) dir = Direcao.UP;
-        else if ( keyCode == KeyEvent.VK_DOWN ) dir = Direcao.DOWN;
-        else if ( keyCode == KeyEvent.VK_SPACE ) {
-            // pode adicionar mais tiros
-            if ( tiros.size() < MAX_TIROS ) {
-                
-                tiros.add( new Bullet( getPreferredSize(), shooter.getX(), shooter.getY() - shooter.getHeight() / 2, Direcao.UP ) );
-            }
-        } else if ( keyCode == KeyEvent.VK_B ) {
+        
+        if (isPaused && keyCode != KeyEvent.VK_P){
+            return;
+        } else if (isWaitingForRestart && keyCode != KeyEvent.VK_ENTER){
+            return;
+        }
+        
+        switch (keyCode){
+            case KeyEvent.VK_ENTER:
+                if (isWaitingForRestart) {
+                    isWaitingForRestart = false;
+                    zerarGame();
+                }
+            break;
             
-            if ( numBombs > 0 ) {
-                if ( bomba == null ) {
-                    
+            case KeyEvent.VK_P:
+                if (!isWaitingForRestart) isPaused = !isPaused;
+            break;
+            
+            case KeyEvent.VK_LEFT:
+                dir = Direcao.LEFT;
+            break;
+            
+            case KeyEvent.VK_RIGHT:
+                dir = Direcao.RIGHT;
+            break;
+                
+            case KeyEvent.VK_UP:
+                dir = Direcao.UP;
+            break;
+        
+            case KeyEvent.VK_DOWN:
+                dir = Direcao.DOWN;
+            break;
+                
+            case KeyEvent.VK_SPACE:
+                 // pode adicionar mais tiros
+                if ( tiros.size() < MAX_TIROS ) {
+                    tiros.add( new Bullet( getPreferredSize(), shooter.getX(), shooter.getY() - shooter.getHeight() / 2, Direcao.UP ) );
+                }
+            break;
+        
+            case KeyEvent.VK_B:
+                if ( numBombs > 0 && bomba == null ) {
                     bomba = new Bomb( getPreferredSize(), shooter.getX(), shooter.getY() - shooter.getHeight() / 2, Direcao.UP );
                     numBombs--;
                 }
-            }
-        }
+            break;
+            
+        }      
     }
     
     // Satisfaz a interface KeyListener
