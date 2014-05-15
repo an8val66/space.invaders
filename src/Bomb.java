@@ -54,6 +54,8 @@ public class Bomb
     // bomba esta ativo?
     public boolean isActive() { return isActive; }
     
+    public void deactive() { isActive = false; }
+    
     // verifica se a bomba esta proximo de um invasor
     public boolean hitIn( Invader i )
     {
