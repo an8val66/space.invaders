@@ -57,13 +57,14 @@ public class Bullet
     {
         int ox = i.getX();
         int oy = i.getY();
-        if ( Math.sqrt( (x - ox ) * ( x - ox ) + ( y -oy ) * ( y - oy ) ) < 10 ) {
-            
+        
+        if ( Math.sqrt( (x - ox ) * ( x - ox ) + ( y -oy ) * ( y - oy ) ) < 15 ) {
             isActive = false;
             return true;
         } else {
-            
             return false;
         }
     }
+    
+    public int getY(){ return y; }
 }

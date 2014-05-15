@@ -6,25 +6,37 @@ import javax.swing.JPanel;
 // class de implementacao do painel do game, controle de elementos e renderizacao
 public class InvadersPanel extends JPanel implements Runnable,KeyListener
 {
+    // Configs
+    private static final int NUM_INVASORES = 30;
+    private static final int MAX_TIROS = 5;
+    private static final int NUM_BOMBAS_DISPONIVEIS = 10;
+    private static final int SCORE_BOMBA = 1;
+    private static final int SCORE_TIRO = 2;
+    
     // dimensoes are game
     private static final int largura = 800;
     private static final int altura = 600;
+    
     // thread para controle de animacao
     private Thread animator;
     private boolean isPaused = false;
+    
     // movimentacao invaders
     private ArrayList<Invader> invasores;
-    private static final int NUM_INVASORES = 30;
+   
     // shooter e direcao de movimento
     private Shooter shooter;
     private Direcao dir;
+    
     // conjunto de tiros
     private ArrayList<Bullet> tiros;
-    private static final int MAX_TIROS = 5;
+    
     // uma unica bomba
     private Bomb bomba;
     private int numBombs;
-    private static final int NUM_BOMBAS_DISPONIVEIS = 10;
+   
+    // score do usuário
+    private double score;
     
     // Construtor, inicializa estrutura cria interface, etc
     public InvadersPanel()
@@ -34,6 +46,11 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
         setFocusable( true );
         requestFocus();
         addKeyListener( this );
+        zerarGame();
+    }
+    
+        
+    private void zerarGame(){
         invasores = new ArrayList<Invader>( NUM_INVASORES );
         for ( int i = 0; i < NUM_INVASORES; i++ )
             invasores.add( new Invader( this.getPreferredSize() ) );
@@ -41,7 +58,7 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
         tiros = new ArrayList<Bullet>( MAX_TIROS );
         bomba = null;
         numBombs = NUM_BOMBAS_DISPONIVEIS;
-        
+        score = 0;
     }
     
     // avisa que agora temos interface em um container parente
@@ -83,23 +100,43 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
             shooter.move( dir );
             for( Bullet b:tiros ) b.move();
             if ( bomba != null ) bomba.move();
-            // projeteis desativados?
-            Iterator<Bullet> it = tiros.iterator();
-            while( it.hasNext() ) { if ( !( it.next() ).isActive() ) it.remove(); }
-            // invasores desativados?
-            Iterator<Invader> ii = invasores.iterator();
-            while( ii.hasNext() ) { if ( !( ii.next() ).isActive() ) ii.remove(); }
+ 
             // colisoes?
-            for ( Bullet b:tiros )
-                for ( Invader i:invasores )
-                    if ( b.hitIn( i ) ) i.desactive();
-            // colisoes com bombas?
-            if ( bomba != null ) {
-                for ( Invader i:invasores ) {
-                    if ( bomba.hitIn( i ) ) { tiros.addAll( bomba.explode() ); i.desactive(); bomba = null; break; }
-                    else if ( bomba.getY() < 0 ) { bomba = null; break; }
+            for ( Iterator<Invader> iteInvasor = invasores.iterator(); iteInvasor.hasNext() ;  ) {
+                Invader invasor = iteInvasor.next();
+                
+                if (shooter.hitIn(invasor)) {
+                    isPaused = true;
+                    zerarGame();
+                    break;
+                }
+                
+                for ( Iterator<Bullet> iteTiro = tiros.iterator(); iteTiro.hasNext() ; ){
+                    Bullet tiro = iteTiro.next();
+                    
+                    if ( tiro.getY() < 0){
+                        iteTiro.remove();
+                    }else if ( tiro.hitIn( invasor ) ){
+                        score += SCORE_TIRO;
+                        iteInvasor.remove();
+                        iteTiro.remove();
+                    } 
+                }
+                
+                if ( bomba != null) { 
+                    if ( bomba.getY() < 0 ) {
+                        bomba.deactive();
+                        bomba = null;
+                    } else  if ( bomba.hitIn( invasor ) ) {
+                        score += SCORE_BOMBA;
+                        iteInvasor.remove();
+                        tiros.addAll(bomba.explode());
+                        bomba.deactive();
+                        bomba = null;
+                    }
                 }
             }
+
         }
     }
     
@@ -107,12 +144,14 @@ public class InvadersPanel extends JPanel implements Runnable,KeyListener
     protected synchronized void paintComponent( Graphics g )
     {
         super.paintComponent( g );
+        
         for( Invader i:invasores ) i.draw( g );
         shooter.draw( g );
         for( Bullet b:tiros ) b.draw( g );
         if ( bomba != null ) bomba.draw( g );
+        
         // print statisticas
-        String s = "Bombas: " + numBombs + " Invasores: " + invasores.size();
+        String s = " Bombas: " + numBombs + " Invasores: " + invasores.size() + " Score: " + score;
         g.drawString( s, 5, getHeight() - 10 );
     }
     
