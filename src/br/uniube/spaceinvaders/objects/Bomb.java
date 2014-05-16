@@ -1,32 +1,29 @@
+package br.uniube.spaceinvaders.objects;
+
+import br.uniube.spaceinvaders.game.Direcao;
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
-// class representa um tiro
-public class Bullet
+public class Bomb
 {
-    // posicao do tiro em pixel
+    // posicao da bomba em pixel
     private int x, y;
     private Direcao direcao;
-    // tiro esta ativo?
+    // bomba esta ativo?
     private boolean isActive;
-    // tamanho do tiro em pixel
+    // tamanho do bomba em pixel
     private int iw, ih;
-    // Imagem do tiro
+    // Imagem do bomba
     private Image icon;
     // area do painel do jogo
     private Dimension area;
-    // projetil de uma bomba
-    private boolean isBombBullet;
-    
-    public Bullet( Dimension a, int x, int y, Direcao dir ){
-        this( a, x, y, dir, false);
-    }
     
     // construtor, inicializa atributos e carrega a arma
-    public Bullet( Dimension a, int x, int y, Direcao dir, boolean bombBullet )
+    public Bomb( Dimension a, int x, int y, Direcao dir )
     {
         area = a;
-        icon = new ImageIcon( getClass().getResource( "/Sprites/bullet.png" ) ).getImage();
+        icon = new ImageIcon( getClass().getResource( "/Sprites/bomb.png" ) ).getImage();
         iw = icon.getWidth( null );
         ih = icon.getHeight( null );
         // x e y passados direto como elemento
@@ -34,7 +31,6 @@ public class Bullet
         this.y = y;
         direcao = dir;
         isActive = true;
-        isBombBullet = bombBullet;
     }
     
     // metodo para movimentar projetil
@@ -48,6 +44,8 @@ public class Bullet
             case UP: { y -= 3; if ( y < 0 ) isActive = false; break; }
             case DOWN: { y += 3; if ( y > area.height - 100 ) isActive = false; break; }
         }
+        //y = y - 3;
+        //if ( y <= 0 ) isActive = false;
     }
     
     // Metodo que desenha o projetil ( graficamente )
@@ -56,25 +54,43 @@ public class Bullet
         if( isActive ) g.drawImage( icon, x - iw / 2, y - ih / 2, null );
     }
     
-    // projetil esta ativo?
+    // bomba esta ativo?
     public boolean isActive() { return isActive; }
     
-    // projetil de uma bomba
-    public boolean isBombBullet() { return isBombBullet; }
+    public void deactive() { isActive = false; }
     
-    // verifica se o projetil esta proximo de um invasor
+    // verifica se a bomba esta proximo de um invasor
     public boolean hitIn( Invader i )
     {
         int ox = i.getX();
         int oy = i.getY();
-        
-        if ( Math.sqrt( (x - ox ) * ( x - ox ) + ( y -oy ) * ( y - oy ) ) < 15 ) {
-            isActive = false;
+        if ( Math.sqrt( (x - ox ) * ( x - ox ) + ( y -oy ) * ( y - oy ) ) < 25 ) {
+
             return true;
         } else {
+            
             return false;
         }
     }
     
-    public int getY(){ return y; }
+    // explosao da bomba ( retorna projeteis )
+    public ArrayList<Bullet> explode()
+    {
+        ArrayList<Bullet> newShoots = new ArrayList<Bullet>( 4 );
+        
+        if ( isActive ) {
+            
+            newShoots.add( new Bullet( area, x, y, Direcao.LEFT ) );
+            newShoots.add( new Bullet( area, x, y, Direcao.RIGHT ) );
+            newShoots.add( new Bullet( area, x, y, Direcao.UP ) );
+            newShoots.add( new Bullet( area, x, y, Direcao.DOWN ) );
+        
+            isActive = false;
+        }
+
+        return newShoots;
+    }
+    
+    public int getX() { return x; }
+    public int getY() { return y; }
 }
