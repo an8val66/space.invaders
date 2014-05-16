@@ -1,1 +1,1 @@
-public enum Direcao { UP, DOWN, LEFT, RIGHT }
+public enum Direcao { UP, DOWN, LEFT, RIGHT, NONE }

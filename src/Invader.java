@@ -15,8 +15,10 @@ public class Invader
     // Area do painel do jogo ( para movimentar )
     private Dimension area;
     
+    private double velocity;
+    
     // Construtor, inicializa atributos e posiciona o rbot
-    public Invader( Dimension a )
+    public Invader( Dimension a , double velocity)
     {
         area = a;
         icon = new ImageIcon( getClass().getResource( "/Sprites/invader.png" ) ).getImage();
@@ -29,11 +31,12 @@ public class Invader
         
         // dx e dy randomicos
         while ( dx == 0 || dy == 0 ) {
-            
-            dx = 3 - (int) ( Math.random() * 6 );
-            dy = 2 - (int) ( Math.random() * 4 );
+            dx = 3 - (int) ( Math.random() * 6 * velocity );
+            dy = 2 - (int) ( Math.random() * 4 * velocity );
             isActive = true;
         }
+        
+        this.velocity = velocity;
     }
     
     // Metodo de movimento do rbot, verificando se esta na area valida
@@ -46,7 +49,7 @@ public class Invader
             if ( x < iw / 2 ) { dx = -dx; x += dx; }
             if ( y < ih / 2 ) { dy = -dy; y += dy; }
             if ( x > area.width - iw / 2 ) { dx = -dx; x += dx; }
-            if ( y > area.height -  ih / 2 ) { dy = -dy; y += dy; }
+            if ( y > area.height -  ih / 2 - 28 ) { dy = -dy; y += dy; }
         }
         
     }
