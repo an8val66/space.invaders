@@ -39,8 +39,6 @@ public class Shooter
         }
     }
     
-   
-    
     // Metodo para desenhar o defensor ( graficamente )
     public void draw( Graphics g )
     {
