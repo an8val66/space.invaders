@@ -15,9 +15,15 @@ public class Bullet
     private Image icon;
     // area do painel do jogo
     private Dimension area;
+    // projetil de uma bomba
+    private boolean isBombBullet;
+    
+    public Bullet( Dimension a, int x, int y, Direcao dir ){
+        this( a, x, y, dir, false);
+    }
     
     // construtor, inicializa atributos e carrega a arma
-    public Bullet( Dimension a, int x, int y, Direcao dir )
+    public Bullet( Dimension a, int x, int y, Direcao dir, boolean bombBullet )
     {
         area = a;
         icon = new ImageIcon( getClass().getResource( "/Sprites/bullet.png" ) ).getImage();
@@ -28,6 +34,7 @@ public class Bullet
         this.y = y;
         direcao = dir;
         isActive = true;
+        isBombBullet = bombBullet;
     }
     
     // metodo para movimentar projetil
@@ -51,6 +58,9 @@ public class Bullet
     
     // projetil esta ativo?
     public boolean isActive() { return isActive; }
+    
+    // projetil de uma bomba
+    public boolean isBombBullet() { return isBombBullet; }
     
     // verifica se o projetil esta proximo de um invasor
     public boolean hitIn( Invader i )
