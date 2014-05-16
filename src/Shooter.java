@@ -4,6 +4,8 @@ import javax.swing.ImageIcon;
 // Classe que representa o defensor no jogo
 public class Shooter
 {
+    private static int VELOCITY = 2;
+    
     // Posicao do defensor em pixels
     private int x, y;
     // Tamanho do defensor em pixels
@@ -23,20 +25,21 @@ public class Shooter
         
         // x e y iniciais centrados na area de movimentacao
         x = (int)( iw / 2 + ( a.width - iw ) / 2 );
-        y = (int)( a.height - 100 + ih / 2 );
+        y = (int)( a.height - 75 + ih / 2 );
     }
     
     public void move( Direcao dir )
     {
         if ( dir == null ) return;
         switch( dir ) {
-            
-            case LEFT: { x--; if ( x < iw / 2 ) x = iw / 2; break; }
-            case RIGHT: { x++; if ( x > area.width - iw / 2 ) x = area.width - iw / 2; break; }
-            case UP: { y--; if ( y < area.height - 100 + ih / 2 ) y = area.height - 100 + ih / 2; break; }
-            case DOWN: { y++; if ( y > area.height - ih / 2 ) y = area.height - ih / 2; break; }
+            case LEFT: { if ( x > iw / 2) x-=VELOCITY; break; }
+            case RIGHT: { if ( x < area.width - iw / 2 ) x+=VELOCITY; break; }
+            case UP: { if ( y > area.height - 100 + ih / 2) y-=VELOCITY; break; }
+            case DOWN: { if ( y < area.height - ih / 2 - 28) y+=VELOCITY; break; }
         }
     }
+    
+   
     
     // Metodo para desenhar o defensor ( graficamente )
     public void draw( Graphics g )
