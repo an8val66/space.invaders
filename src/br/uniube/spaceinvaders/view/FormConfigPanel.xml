@@ -1,0 +1,20 @@
+<DynamicPanel>
+    <Panel>
+        <VerticalPanel>
+            <Form label="Configurações Gerais" spacing="5">
+<!--                    <RadioButtonGroup id="dificuldadeGroup" label="Dificuldade">
+                            <RadioButton label="Fácil" value="F" selected="true"/>
+                            <RadioButton label="Médio" value="M"/>
+                            <RadioButton label="Difícil" value="D"/>
+                    </RadioButtonGroup>-->
+
+                    <CheckBox id="chkMovimentoPersistente" label="Movimento Persistente"/>
+            </Form>
+            <HorizontalPanel spacing="5">
+                <Button id="btnSalvar" label="Salvar"/>
+                <Button id="btnCancelar" label="Cancelar"/>
+        </HorizontalPanel>
+        </VerticalPanel>
+    </Panel>
+</DynamicPanel>
+

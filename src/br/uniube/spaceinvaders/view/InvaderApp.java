@@ -7,8 +7,8 @@
 package br.uniube.spaceinvaders.view;
 
 import br.uniube.spaceinvaders.game.Game;
+import br.uniube.spaceinvaders.utils.MessageUtils;
 import java.awt.Dimension;
-import java.awt.MenuItem;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +25,9 @@ public class InvaderApp extends DynamicPanel{
     private static final int altura = 600;
     
     VerticalPanel painelJogo;
+    
     Game game;
+    FormConfig frmConfig;
     
     JMenuItem mnuConfig;
     JMenuItem mnuSair;
@@ -43,7 +45,7 @@ public class InvaderApp extends DynamicPanel{
             frame.pack();
             frame.setVisible( true );
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, "Ocorreu um erro ao iniciar o jogo: \n" + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            MessageUtils.showErrorMessage("Ocorreu um erro ao iniciar o jogo: \n" + e.getMessage(), "Erro");
         }
         
     }
@@ -52,12 +54,21 @@ public class InvaderApp extends DynamicPanel{
         setPreferredSize(new Dimension( largura, altura ));
     }
 
+    @Override
     public void initComponents() {
         game = new Game();
         painelJogo.add(game);
         
         mnuConfig.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (frmConfig == null){
+                   frmConfig = new FormConfig();
+                }
+                
+                if (frmConfig != null){
+                    frmConfig.setVisible(true);
+                    game.pausarGame();
+                }
                 
             }
         });

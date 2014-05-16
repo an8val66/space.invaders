@@ -285,7 +285,7 @@ public class Game extends JPanel implements Runnable, KeyListener
             break;
             
             case KeyEvent.VK_D:
-                persistentDirection = !persistentDirection;
+                Configs.isMovimentoPersistente = !Configs.isMovimentoPersistente;
                 dir = Direcao.NONE;
             break;
                 
@@ -313,9 +313,13 @@ public class Game extends JPanel implements Runnable, KeyListener
         }      
     }
     
+    public void pausarGame(){
+        gameStatus = GameStatus.PAUSADO;
+    }
+    
     // Satisfaz a interface KeyListener
     public void keyReleased( KeyEvent e ){
-        if ( !persistentDirection &&
+        if ( !Configs.isMovimentoPersistente &&
             (e.getKeyCode() == KeyEvent.VK_LEFT ||
              e.getKeyCode() == KeyEvent.VK_RIGHT ||
              e.getKeyCode() == KeyEvent.VK_UP ||
