@@ -1,3 +1,6 @@
+package br.uniube.spaceinvaders.objects;
+
+import br.uniube.spaceinvaders.game.Direcao;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;

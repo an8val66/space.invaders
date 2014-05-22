@@ -1,0 +1,17 @@
+<DynamicPanel>
+    <Panel>
+            <MenuBar>
+                    <Menu label="Jogo">
+                        <MenuItem label="Configurações" id="mnuConfig"/>
+                        <MenuItem label="Sair" id="mnuSair"/>
+                    </Menu>
+                    <Menu label="Ajuda">
+                        <MenuItem label="Controles" id="mnuControles"/>
+                        <MenuItem label="Sobre" id="mnuSobre"/>
+                    </Menu>
+            </MenuBar>
+            <VerticalPanel id="painelJogo">
+            </VerticalPanel>
+    </Panel>
+</DynamicPanel>
+
